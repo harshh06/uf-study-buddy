@@ -1,0 +1,31 @@
+.progressCard {
+  width: 10rem;
+  border: 1px solid;
+  height: 8rem;
+  padding: 1rem;
+}
+
+.progressCardsContainer {
+  display: flex;
+  gap: 1rem;
+  justify-content: space-between;
+  padding: 2rem;
+}
+
+.courseCard {
+  border: 1px solid;
+  width: 25rem;
+  height: 20rem;
+  padding: 1rem;
+}
+
+.courseCardsContainer {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  justify-content: space-evenly;
+}
+
+.dashboardContainer {
+  overflow-y: scroll;
+}

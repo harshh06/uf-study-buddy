@@ -16,7 +16,12 @@
   :root {
     --background: #0a0a0a;
     --foreground: #ededed;
+    height: 100%;
   }
+}
+
+html, body, #__next {
+  height: 100%;
 }
 
 body {
