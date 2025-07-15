@@ -1,11 +1,16 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { v4 as uuidv4 } from "uuid";
 import FileUpload from "./FileUpload";
 
 const UploadSyllabus = () => {
   const [extractedText, setExtractedText] = useState<string>("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string>("");
-  const [response, setResponse] = useState<string>("");
+  const [response, setResponse] = useState<Array<{
+    week: string;
+    topic: string;
+    due_items: Array<{ title: string; due_date: string }>;
+  }> | null>(null);
 
   // Helper function to convert File to base64
   const fileToBase64 = (file: File): Promise<string> => {
@@ -72,9 +77,37 @@ const UploadSyllabus = () => {
 
     const data = await res.json();
 
-    const schedule = JSON.parse(data.formatted);
-    setResponse(data.formatted || JSON.stringify(data.error));
+    const parsedData = JSON.parse(data.formatted);
+    setResponse(parsedData || JSON.stringify(data.error));
   };
+
+  const saveSyllabus = async (syllabus: any[]) => {
+    const userId = uuidv4();
+    const res = await fetch("/api/save-syllabus", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ syllabus, userId }),
+    });
+    const data = await res.json();
+    if (data.error) {
+      console.error("Error saving syllabus:", data.error);
+      setError(data.error);
+    } else {
+      console.log("Syllabus saved successfully:", data);
+    }
+  };
+
+  useEffect(() => {
+    if (response && response.length > 0) {
+      console.log("Parsed syllabus response:", response);
+      const syllabus = response.map((week: any) => ({
+        week: week.week,
+        topic: week.topic,
+        due_items: week.due_items || [],
+      }));
+      saveSyllabus(syllabus);
+    }
+  }, [response]);
 
   return (
     <div>
@@ -89,6 +122,15 @@ const UploadSyllabus = () => {
         }}
         onUpload={onUpload}
       />
+      {response && response.length > 0 && (
+        <div>
+          <div>
+            Extracted Information:
+            <div>{response.length} course topics found.</div>
+            <div>Course schedule organized.</div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

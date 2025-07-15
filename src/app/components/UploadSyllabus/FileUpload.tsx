@@ -320,7 +320,9 @@ const FileUpload: React.FC<FileUploadProps> = ({
             {uploadStatus === "success" && (
               <div className="flex items-center text-green-600">
                 <CheckCircle className="h-5 w-5 mr-2" />
-                <span className="text-sm font-medium">Upload successful!</span>
+                <span className="text-sm font-medium">
+                  Syllabus parsed successfully!
+                </span>
               </div>
             )}
             {uploadStatus === "error" && (
