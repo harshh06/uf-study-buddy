@@ -5,6 +5,7 @@ const UploadSyllabus = () => {
   const [extractedText, setExtractedText] = useState<string>("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string>("");
+  const [response, setResponse] = useState<string>("");
 
   // Helper function to convert File to base64
   const fileToBase64 = (file: File): Promise<string> => {
@@ -62,6 +63,19 @@ const UploadSyllabus = () => {
     }
   };
 
+  const onUpload = async () => {
+    const res = await fetch("/api/parse-syllabus", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ parsedText: extractedText }),
+    });
+
+    const data = await res.json();
+
+    const schedule = JSON.parse(data.formatted);
+    setResponse(data.formatted || JSON.stringify(data.error));
+  };
+
   return (
     <div>
       <h1>Upload Syllabus</h1>
@@ -73,12 +87,7 @@ const UploadSyllabus = () => {
         onFilesChange={(files) => {
           handleFileUpload(files);
         }}
-        onUpload={async (files) => {
-          // Your upload logic here
-          //   const formData = new FormData();
-          //   files.forEach((file) => formData.append("files", file));
-          //   await fetch("/api/upload", { method: "POST", body: formData });
-        }}
+        onUpload={onUpload}
       />
     </div>
   );
